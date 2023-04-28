@@ -41,6 +41,41 @@ pipeline {
          }
       }
     }
+    
+    stage('Test image') {
+       agent any
+       steps {
+          script {
+            sh '''
+               curl -v 172.17.0.1:$EXTERNAL_PORT | grep -i "IC GROUP"
+            '''
+          }
+       }
+    }
+
+    stage('Clean container') {
+      agent any
+      steps {
+         script {
+           sh '''
+               docker stop $IMAGE_NAME
+               docker rm $IMAGE_NAME
+           '''
+         }
+      }
+    }
+  
+    stage ('Login and Push Image on docker hub') {
+      agent any
+      steps {
+         script {
+           sh '''
+               echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_ID --password-stdin
+               docker push ${DOCKERHUB_ID}/$IMAGE_NAME:$IMAGE_TAG
+           '''
+         }
+      }
+    }
 
   }
   
