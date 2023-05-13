@@ -83,7 +83,7 @@ pipeline {
            steps {
                script{
                    sh '''
-                      cd source
+                      cd stack
                       ls
                       terraform init
                       terraform apply --auto-approve
