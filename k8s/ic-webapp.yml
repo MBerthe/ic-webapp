@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ic-webapp-deployment
+  namespace: icgroup
+  labels:
+    env: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ic-webapp
+  template:
+    metadata:
+      labels:
+        app: ic-webapp
+    spec:
+      containers:
+      - name: ic-webapp
+        image: ic-webapp:1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ODOO_URL
+          value: http://192.168.10.10:30300
+        - name: PGADMIN_URL
+          value: http://192.168.10.10:30100
+
+# Service configuration because every application needs a service
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ic-webapp-service
+  namespace: icgroup
+  labels:
+    env: prod
+spec:
+  type: NodePort
+  selector:
+    # same name of pod, it needs to match in order the service to select the good pod
+    app: ic-webapp
+  ports:
+    - protocol: TCP
+      # Service port, it common to use the targetPort as service port
+      port: 8080
+      # Container port inside Pod, the service forwards the request to targetPort
+      targetPort: 8080
+      # nodePort exposes the service on each Node's IP at static port range: 30000-32767 
+      nodePort: 30400
