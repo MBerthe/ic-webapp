@@ -10,7 +10,6 @@ pipeline {
     PRODUCTION="ic-webapp-mb-prod"
     DOCKERHUB_ID = "mnberthe"
     DOCKERHUB_PASSWORD = credentials('dockerhub')
-    HEROKU_API_KEY  = credentials('heroku_api_key')
     INTERNAL_PORT = "8080"
     EXTERNAL_PORT = "9090"
     CONTAINER_IMAGE = "${DOCKERHUB_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
